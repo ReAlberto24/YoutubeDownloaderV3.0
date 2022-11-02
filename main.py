@@ -43,39 +43,64 @@ codec = config['codec']
 codec_video_streams = []
 codec_audio_streams = []
 
-# get all video streams with config codec
-for i in video_streams:
-    if i.mime_type == f'video/{codec}':
-        #print(i.itag, i.resolution, i.fps, i.codecs)
-        codec_video_streams.append(i)
+if int(input('only audio (0: no, 1: yes): ')):
+    # get all audio streams with config codec
+    for i in audio_streams:
+        if i.mime_type == f'audio/{codec}':
+            #print(i.itag, i.abr, i.mime_type)
+            codec_audio_streams.append(i)
+else:
+    # get all video streams with config codec
+    for i in video_streams:
+        if i.mime_type == f'video/{codec}':
+            #print(i.itag, i.resolution, i.fps, i.codecs)
+            codec_video_streams.append(i)
 
-# get all audio streams with config codec
-for i in audio_streams:
-    if i.mime_type == f'audio/{codec}':
-        #print(i.itag, i.abr, i.mime_type)
-        codec_audio_streams.append(i)
+    # get all audio streams with config codec
+    for i in audio_streams:
+        if i.mime_type == f'audio/{codec}':
+            #print(i.itag, i.abr, i.mime_type)
+            codec_audio_streams.append(i)
 
-# get requested resolution
-for i, x in enumerate(codec_video_streams):
-    print(i, x.resolution, str(x.fps)+'fps')
-#print(codec_video_streams)
-video_stream = codec_video_streams[ int( input(': ') ) ]
-audio_stream = codec_audio_streams[::-1][0]
+codec_audio_streams = codec_audio_streams[::-1]
 
-#downloading streams
-print('Video stream')
-video_stream.download(filename=f'video_stream.{codec}')
-print('Audio stream'+' '*70)
+video_stream = None
+audio_stream = None
+
+if len(codec_video_streams) > 0:
+    # get requested resolution
+    for i, x in enumerate(codec_video_streams):
+        print(i, x.resolution, str(x.fps)+'fps')
+    #print(codec_video_streams)
+    video_stream = codec_video_streams[ int( input(': ') ) ]
+    audio_stream = codec_audio_streams[0]
+else:
+    # get requested resolution
+    for i, x in enumerate(codec_audio_streams):
+        print(i, x.abr)
+    #print(codec_audio_streams)
+    audio_stream = codec_audio_streams[ int( input(': ') ) ]
+
+# downloading streams
+if video_stream != None:
+    print('Downloading video stream')
+    video_stream.download(filename=f'video_stream.{codec}')
+print('Downloading audio stream'+' '*60)
 audio_stream.download(filename=f'audio_stream.{codec}')
 
 # convert to final .mp4 file
-print('Converting audio stream'+' '*70)
+print('Converting audio stream'+' '*60)
 subprocess.run(f'.\\ffmpeg -i .\\audio_stream.{codec} .\\audio_stream.mp3 -y', stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
-print('Unifying video & audio streams')
-subprocess.run(f'.\\ffmpeg -i .\\video_stream.{codec} -i .\\audio_stream.mp3 -c copy ".\\{download_directory}\\{video_stream.default_filename.rsplit(".")[0]}.mp4" -y', stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
+if video_stream != None:
+    print('Unifying video & audio streams')
+    subprocess.run(f'.\\ffmpeg -i .\\video_stream.{codec} -i .\\audio_stream.mp3 -c copy ".\\{download_directory}\\{audio_stream.default_filename.rsplit(".")[0]}.mp4" -y', stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
+else:
+    os.rename('.\\audio_stream.mp3', f'.\\{download_directory}\\{audio_stream.default_filename.rsplit(".")[0]}.mp3')
 
 # removing temp files
 print('Removing temp files')
-os.remove(f'audio_stream.mp3')
+try: os.remove(f'audio_stream.mp3')
+except: pass
 os.remove(f'audio_stream.{codec}')
-os.remove(f'video_stream.{codec}')
+try: os.remove(f'video_stream.{codec}')
+except: pass
