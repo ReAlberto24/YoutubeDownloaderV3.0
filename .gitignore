@@ -4,7 +4,7 @@ video_url.txt
 get-pip.py
 
 # video streams
-etx.xml
+ext.xml
 exta.xml
 
 # video files
@@ -12,6 +12,7 @@ video_stream.webm
 audio_stream.webm
 video_stream.mp4
 audio_stream.mp4
+downloads/
 
 # gui
 gui.py

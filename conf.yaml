@@ -1,0 +1,14 @@
+# mp4 or webm
+# webm limits:
+#     video: 4k or UHD
+#     audio: 160kbps
+# mp4 limits:
+#     video: 8k
+#     audio: 128kbps
+codec: 'webm'
+
+# %u = User Name
+# 0 = Default Windows download directory
+# 1 = Project download directory
+# Example: C:\Users\%u\Desktop\
+download_directory: 1
