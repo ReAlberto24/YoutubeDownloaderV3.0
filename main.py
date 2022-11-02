@@ -1,6 +1,6 @@
 from pytube import YouTube
 from pytube.cli import on_progress
-import subprocess
+import subprocess, os
 
 #link = 'https://www.youtube.com/watch?v=tqK5VoEyDQU'
 #link = 'https://www.youtube.com/watch?v=lJVGd7cBGuQ'
@@ -56,4 +56,10 @@ print('Audio stream'+' '*70)
 audio_stream.download(filename=f'audio_stream.{codec}')
 print()
 
-subprocess.run(f'.\\ffmpeg -i video_stream.{codec} -i audio_stream.{codec} -c copy "{video_stream.default_filename.rsplit(".")[0]}.mp4" -y', stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
+subprocess.run(f'.\\ffmpeg -i audio_stream.{codec} audio_stream.mp3 -y', stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
+subprocess.run(f'.\\ffmpeg -i video_stream.{codec} -i audio_stream.mp3 -c copy "{video_stream.default_filename.rsplit(".")[0]}.mp4" -y', stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
+
+# removing temp files
+os.remove(f'audio_stream.mp3')
+os.remove(f'audio_stream.{codec}')
+os.remove(f'video_stream.{codec}')
