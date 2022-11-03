@@ -1,3 +1,4 @@
+from sys import path as syspath; syspath.append('.')
 from pytube import YouTube
 from pytube.cli import on_progress
 from getpass import getuser

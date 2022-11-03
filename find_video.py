@@ -1,3 +1,4 @@
+from sys import path as syspath; syspath.append('.')
 import urllib.request
 import urllib.parse
 import re
