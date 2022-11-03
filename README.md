@@ -1,0 +1,1 @@
+After this program for the first time you need to run setup.bat for the first time

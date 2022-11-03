@@ -20,3 +20,5 @@ default.ui
 
 # ffmpeg
 ffmpeg.exe
+
+__pycache__
