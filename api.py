@@ -13,7 +13,7 @@ def download(video_stream:Any, audio_stream:Any, codec:str, download_directory:s
     subprocess.run(f'.\\ffmpeg -i .\\audio_stream.{codec} .\\audio_stream.wav -y', stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
     if video_stream != None:
         print('Unifying video & audio streams')
-        subprocess.run(f'.\\ffmpeg -i .\\video_stream.{codec} -i .\\audio_stream.wav -c copy ".\\{download_directory}\\{audio_stream.default_filename.rsplit(".")[0]}.mp4" -y', stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
+        subprocess.run(f'.\\ffmpeg -i .\\video_stream.{codec} -i .\\audio_stream.wav -c:v copy -c:a aac ".\\{download_directory}\\{audio_stream.default_filename.rsplit(".")[0]}.mp4" -y', stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
     else:
         os.rename('.\\audio_stream.wav', f'.\\{download_directory}\\{audio_stream.default_filename.rsplit(".")[0]}.wav')
 

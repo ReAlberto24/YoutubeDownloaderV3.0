@@ -98,13 +98,6 @@ else:
     #print(codec_audio_streams)
     audio_stream = codec_audio_streams[ int( input(': ') ) ]
 
-# downloading streams
-if video_stream != None:
-    print('Downloading video stream')
-    video_stream.download(filename=f'video_stream.{codec}')
-print('Downloading audio stream'+' '*60)
-audio_stream.download(filename=f'audio_stream.{codec}')
-
 # convert to final .mp4 file
 print('Converting audio stream'+' '*60)
 download(video_stream, audio_stream, codec, download_directory)
