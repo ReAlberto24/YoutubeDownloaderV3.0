@@ -26,18 +26,25 @@ except:
 
 # starting program + starting pytube
 vid_find = urllib.parse.quote(input('Video to find: '))
+print('loading videos')
 html = urllib.request.urlopen(f'https://www.youtube.com/results?search_query={vid_find}')
-videos_ids = re.findall(r'watch\?v=(\S{11})', html.read().decode())
-link = f'https://www.youtube.com/watch?v={videos_ids[0]}'
+videos_ids = re.findall(r'watch\?v=(\S{11})', html.read().decode())[0:8]
+videos = []
+for ind, id in enumerate(videos_ids[0:8]):
+    id_yt = YouTube(f'https://www.youtube.com/watch?v={id}', on_progress_callback=on_progress)
+    videos.append(f'{ind} ({id}) | {id_yt.title}')
+print('\n'.join(videos))
+link = f'https://www.youtube.com/watch?v={videos_ids[ int( input(": ") ) ]}'
 
 yt = YouTube(link, on_progress_callback=on_progress)
+print(yt.title, f'({link})')
 
 video_streams = []
 audio_streams = []
 
 # getting audio & video streams from pytube
 for i in yt.streams.filter(progressive=False):
-    if i.type == 'video':    video_streams.append(i)
+    if   i.type == 'video':  video_streams.append(i)
     elif i.type == 'audio':  audio_streams.append(i)
     else:                    raise Exception('Invalid stream type')
 
@@ -98,16 +105,17 @@ audio_stream.download(filename=f'audio_stream.{codec}')
 
 # convert to final .mp4 file
 print('Converting audio stream'+' '*60)
-subprocess.run(f'.\\ffmpeg -i .\\audio_stream.{codec} .\\audio_stream.mp3 -y', stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
+subprocess.run(f'.\\ffmpeg -i .\\audio_stream.{codec} .\\audio_stream.wav -y', stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
 if video_stream != None:
     print('Unifying video & audio streams')
-    subprocess.run(f'.\\ffmpeg -i .\\video_stream.{codec} -i .\\audio_stream.mp3 -c copy ".\\{download_directory}\\{audio_stream.default_filename.rsplit(".")[0]}.mp4" -y', stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
+    #subprocess.run(f'.\\ffmpeg -i .\\video_stream.{codec} -i .\\audio_stream.wav -c copy ".\\{download_directory}\\{audio_stream.default_filename.rsplit(".")[0]}.mp4" -y')
+    subprocess.run(f'.\\ffmpeg -i .\\video_stream.{codec} -i .\\audio_stream.wav -c:v copy -c:a aac ".\\{download_directory}\\{audio_stream.default_filename.rsplit(".")[0]}.mp4" -y', stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
 else:
-    os.rename('.\\audio_stream.mp3', f'.\\{download_directory}\\{audio_stream.default_filename.rsplit(".")[0]}.mp3')
+    os.rename('.\\audio_stream.wav', f'.\\{download_directory}\\{audio_stream.default_filename.rsplit(".")[0]}.wav')
 
 # removing temp files
 print('Removing temp files')
-try: os.remove(f'audio_stream.mp3')
+try: os.remove(f'audio_stream.wav')
 except: pass
 os.remove(f'audio_stream.{codec}')
 try: os.remove(f'video_stream.{codec}')

@@ -24,6 +24,8 @@ except:
 link = input('video link: ')
 yt = YouTube(link, on_progress_callback=on_progress)
 
+print(yt.title)
+
 video_streams = []
 audio_streams = []
 
