@@ -3,6 +3,9 @@ c.py
 video_url.txt
 get-pip.py
 
+extract_spotify.py
+.cache
+
 # video streams
 ext.xml
 exta.xml
